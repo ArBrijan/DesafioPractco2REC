@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Factura con Tailwind</title>
+    <!-- Incluir Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+
+<div class="bg-white p-8 rounded-lg shadow-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2">
+    <h1 class="text-2xl mb-4">Formulario de Factura</h1>
+    
+    <form action="#" method="POST" id="facturaForm">
+        <!-- Nombre del Cliente -->
+        <div class="mb-4">
+            <label for="nombreCliente" class="block text-gray-600 text-sm mb-2">Nombre del Cliente</label>
+            <input type="text" id="nombreCliente" name="nombreCliente" placeholder="Nombre del Cliente" class="w-full p-2 border rounded-md">
+        </div>
+        
+        <!-- Dirección del Cliente -->
+        <div class="mb-4">
+            <label for="direccionCliente" class="block text-gray-600 text-sm mb-2">Dirección del Cliente</label>
+            <input type="text" id="direccionCliente" name="direccionCliente" placeholder="Dirección del Cliente" class="w-full p-2 border rounded-md">
+        </div>
+        
+        <!-- Fecha de Emisión -->
+        <div class="mb-4">
+            <label for="fechaEmision" class="block text-gray-600 text-sm mb-2">Fecha de Emisión</label>
+            <input type="date" id="fechaEmision" name="fechaEmision" class="w-full p-2 border rounded-md">
+        </div>
+        
+        <!-- Descripción del Producto/Servicio -->
+        <div class="mb-4">
+            <label for="descripcion" class="block text-gray-600 text-sm mb-2">Descripción del Producto/Servicio</label>
+            <textarea id="descripcion" name="descripcion" rows="3" placeholder="Descripción del Producto/Servicio" class="w-full p-2 border rounded-md"></textarea>
+        </div>
+
+        <!-- Cantidad -->
+        <div class="mb-4">
+            <label for="cantidad" class="block text-gray-600 text-sm mb-2">Cantidad</label>
+            <input type="number" id="cantidad" name="cantidad" placeholder="Cantidad" class="w-full p-2 border rounded-md">
+        </div>
+
+        <!-- Precio Unitario -->
+        <div class="mb-4">
+            <label for="precioUnitario" class="block text-gray-600 text-sm mb-2">Precio Unitario</label>
+            <input type="number" id="precioUnitario" name="precioUnitario" placeholder="Precio Unitario" class="w-full p-2 border rounded-md">
+        </div>
+
+        <!-- Botón de agregar producto -->
+        <div class="mb-4">
+            <button type="button" id="agregarProducto" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">Agregar Producto</button>
+        </div>
+
+        <!-- Tabla de Productos -->
+        <div class="mb-4">
+            <table class="min-w-full border-collapse border border-gray-300">
+                <thead>
+                    <tr>
+                        <th class="border p-2">Descripción</th>
+                        <th class="border p-2">Cantidad</th>
+                        <th class="border p-2">Precio Unitario</th>
+                        <th class="border p-2">Total</th>
+                        <th class="border p-2">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaProductos">
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Botón de generar factura -->
+        <div class="flex justify-end">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Generar Factura</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const facturaForm = document.getElementById('facturaForm');
+        const tablaProductos = document.getElementById('tablaProductos');
+        const agregarProductoBtn = document.getElementById('agregarProducto');
+        const totalGeneralInput = document.getElementById('totalGeneral');
+        
+        agregarProductoBtn.addEventListener('click', () => {
+            const descripcion = document.getElementById('descripcion').value;
+            const cantidad = document.getElementById('cantidad').value;
+            const precioUnitario = document.getElementById('precioUnitario').value;
+            const total = cantidad * precioUnitario;
+            
+            const fila = `
+                <tr>
+                    <td class="border p-2">${descripcion}</td>
+                    <td class="border p-2">${cantidad}</td>
+                    <td class="border p-2">${precioUnitario}</td>
+                    <td class="border p-2">${total}</td>
+                    <td class="border p-2">
+                        <button type="button" class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600" onclick="eliminarFila(this)">Eliminar</button>
+                    </td>
+                </tr>
+            `;
+            
+            tablaProductos.innerHTML += fila;
+            
+            // Calcular y actualizar el total general
+            let totalGeneral = 0;
+            document.querySelectorAll('#tablaProductos tbody tr').forEach(row => {
+                totalGeneral += parseFloat(row.cells[3].textContent);
+            });
+            totalGeneralInput.value = totalGeneral.toFixed(2);
+        });
+    });
+    
+    function eliminarFila(btn) {
+        const fila = btn.closest('tr');
+        fila.remove();
+        
+        // Recalcular el total general
+        let totalGeneral = 0;
+        document.querySelectorAll('#tablaProductos tbody tr').forEach(row => {
+            totalGeneral += parseFloat(row.cells[3].textContent);
+        });
+        document.getElementById('totalGeneral').value = totalGeneral.toFixed(2);
+    }
+</script>
+
+</body>
+</html>
